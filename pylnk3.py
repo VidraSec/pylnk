@@ -690,7 +690,7 @@ class PathSegmentEntry(object):
         return out.getvalue()
 
     def __str__(self):
-        return "<PathSegmentEntry: %s>" % self.full_name
+        return f"<PathSegmentEntry: {self.full_name} ({self.type})>"
 
 
 class UwpSubBlock:
