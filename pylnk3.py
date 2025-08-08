@@ -1803,10 +1803,25 @@ def for_file(
         elements = [RootEntry(ROOT_MY_COMPUTER),
                     DriveEntry(levels[0])]
         for level in levels[1:]:
-            # set TYPE_FOLDER by default, unless it's the last entry (which is the file)
-            entry_type = TYPE_FOLDER
-            if level == levels[-1]:
-                entry_type = TYPE_FILE
+            entry_type = None
+            # check if entry exists in file system
+            if os.path.exists(level):
+                # check if entry is dir
+                if os.path.isdir(level):
+                    entry_type = TYPE_FOLDER
+                elif os.path.isfile(level):
+                    entry_type = TYPE_FILE
+                else:
+                    raise RuntimeError(f"Unknown file system entry type for path: {level}")
+            else:
+                # path does not exist (creating from linux or different system)
+                # set TYPE_FOLDER by default, unless it's the last entry (which is the file)
+                # not possible to create links to folders
+                if level == levels[-1]:
+                    entry_type = TYPE_FILE
+                else:
+                    entry_type = TYPE_FOLDER
+
             segment = PathSegmentEntry.create_for_path(level, entry_type)
             elements.append(segment)
         lnk.shell_item_id_list = LinkTargetIDList()
